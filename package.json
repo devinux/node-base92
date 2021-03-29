@@ -1,6 +1,6 @@
 {
   "name": "node-base92",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Support base92 encoding and decoding",
   "main": "src/index.js",
   "files": [
