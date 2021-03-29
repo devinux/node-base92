@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-// const { expect } = require("_@jest_globals@26.6.2@@jest/globals");
 const { encode, decode } = require('../src');
-
 describe('encode test', () => {
   it('input params is string', () => {
     expect(encode('Hello World')).toMatch(';K_$aOTbKnsM*k');
