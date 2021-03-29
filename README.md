@@ -1,4 +1,6 @@
 # node-base92
+### Description
+A C++ addon for nodejs supports base92 encoding and decoding.
 ### Install
 
 ```

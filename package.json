@@ -1,7 +1,7 @@
 {
   "name": "node-base92",
   "version": "0.0.3",
-  "description": "Support base92 encoding and decoding",
+  "description": "A C++ addon for nodejs supports base92 encoding and decoding",
   "main": "src/index.js",
   "files": [
     "src",
@@ -18,7 +18,11 @@
     "type": "git",
     "url": "git+https://github.com/devinux/node-base92.git"
   },
-  "keywords": [],
+  "keywords": [
+    "base92",
+    "encode",
+    "decode"
+  ],
   "author": "Devin Xu",
   "license": "MIT",
   "gypfile": true,
