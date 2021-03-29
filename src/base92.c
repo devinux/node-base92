@@ -1,0 +1,218 @@
+#include "base92.h"
+
+unsigned char ENCODE_MAPPING[256] = (unsigned char[]){
+    33, 35, 36, 37, 38, 39, 40, 41, 42, 43,
+    44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+    54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
+    74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+    84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+    94, 95, 97, 98, 99, 100, 101, 102, 103, 104,
+    105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
+    115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+    125, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0};
+unsigned char DECODE_MAPPING[256] = (unsigned char[]){
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 0, 255, 1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+    26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+    36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+    46, 47, 48, 49, 50, 51, 52, 53, 54, 55,
+    56, 57, 58, 59, 60, 61, 255, 62, 63, 64,
+    65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+    75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
+    85, 86, 87, 88, 89, 90, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255};
+
+unsigned char base92chr_encode(unsigned char byt)
+{
+    return ENCODE_MAPPING[byt];
+}
+
+unsigned char base92chr_decode(unsigned char byt)
+{
+    return DECODE_MAPPING[byt];
+}
+
+unsigned char *base92encode(unsigned char *str, int len)
+{
+    unsigned int i, j;       // i for raw, j for encoded
+    unsigned int size;       // for the malloc
+    unsigned long workspace; // bits holding bin
+    unsigned short wssize;   // number of good bits in workspace
+    int tmp;
+    unsigned char c;
+    unsigned char *res;
+
+    if (len == 0)
+    {
+        return "~";
+    }
+    // precalculate how much space we need to malloc
+    size = (len * 8) % 13;
+    if (size == 0)
+    {
+        size = 2 * ((len * 8) / 13);
+    }
+    else if (size < 7)
+    {
+        size = 2 * ((len * 8) / 13) + 1;
+    }
+    else
+    {
+        size = 2 * ((len * 8) / 13) + 2;
+    }
+    // do the malloc, add space for a null byte
+    res = (unsigned char *)malloc(sizeof(char) * (size + 1));
+    workspace = 0;
+    wssize = 0;
+    j = 0;
+    for (i = 0; i < len; i++)
+    {
+        workspace = workspace << 8 | str[i];
+        wssize += 8;
+        if (wssize >= 13)
+        {
+            tmp = (workspace >> (wssize - 13)) & 8191;
+            c = base92chr_encode(tmp / 91);
+            if (c == 0)
+            {
+                // do something, illegal character
+                free(res);
+                return NULL;
+            }
+            res[j++] = c;
+            c = base92chr_encode(tmp % 91);
+            if (c == 0)
+            {
+                // do something, illegal character
+                free(res);
+                return NULL;
+            }
+            res[j++] = c;
+            wssize -= 13;
+        }
+    }
+    // encode a last byte
+    if (0 < wssize && wssize < 7)
+    {
+        tmp = (workspace << (6 - wssize)) & 63; // pad the right side
+        c = base92chr_encode(tmp);
+        if (c == 0)
+        {
+            // do something, illegal character
+            free(res);
+            return NULL;
+        }
+        res[j] = c;
+    }
+    else if (7 <= wssize)
+    {
+        tmp = (workspace << (13 - wssize)) & 8191; // pad the right side
+        c = base92chr_encode(tmp / 91);
+        if (c == 0)
+        {
+            // do something, illegal character
+            free(res);
+            return NULL;
+        }
+        res[j++] = c;
+        c = base92chr_encode(tmp % 91);
+        if (c == 0)
+        {
+            // do something, illegal character
+            free(res);
+            return NULL;
+        }
+        res[j] = c;
+    }
+    // add the null byte
+    res[size] = 0;
+    return res;
+}
+
+// this guy expects a null-terminated string
+// gives back a non-null terminated string, and properly filled len
+unsigned char *base92decode(unsigned char *str, int *len)
+{
+    int i, j, b1, b2;
+    int size;
+    unsigned char *res;
+    unsigned long workspace;
+    unsigned short wssize;
+    size = strlen(str);
+    // handle small cases first
+    if (strcmp(str, "~") == 0 || size == 0)
+    {
+        res = (unsigned char *)malloc(sizeof(char) * 1);
+        res[0] = 0;
+        return res;
+    }
+    // this case does not fit the specs
+    if (size < 2)
+    {
+        res = NULL;
+    }
+    // calculate size
+    *len = ((size / 2 * 13) + (size % 2 * 6)) / 8;
+    res = (unsigned char *)malloc(sizeof(char) * (*len));
+    // handle pairs of chars
+    workspace = 0;
+    wssize = 0;
+    j = 0;
+    for (i = 0; i + 1 < size; i += 2)
+    {
+        b1 = base92chr_decode(str[i]);
+        b2 = base92chr_decode(str[i + 1]);
+        workspace = (workspace << 13) | (b1 * 91 + b2);
+        wssize += 13;
+        while (wssize >= 8)
+        {
+            res[j++] = (workspace >> (wssize - 8)) & 255;
+            wssize -= 8;
+        }
+    }
+    // handle single char
+    if (size % 2 == 1)
+    {
+        workspace = (workspace << 6) | base92chr_decode(str[size - 1]);
+        wssize += 6;
+        while (wssize >= 8)
+        {
+            res[j++] = (workspace >> (wssize - 8)) & 255;
+            wssize -= 8;
+        }
+    }
+    return res;
+}

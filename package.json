@@ -1,0 +1,28 @@
+{
+  "name": "node-base92",
+  "version": "0.0.0",
+  "description": "Support base92 encoding and decoding",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "binding.gyp"
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devinux/node-base92.git"
+  },
+  "keywords": [],
+  "author": "Devin Xu",
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/devinux/node-base92/issues"
+  },
+  "homepage": "https://github.com/devinux/node-base92#readme"
+}
