@@ -12,7 +12,6 @@
 
 static napi_value EncodeBase92(napi_env env, napi_callback_info info)
 {
-    napi_status status;
     napi_value result;
     size_t argc = 1;
     napi_value args[1];
@@ -27,13 +26,13 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
         napi_throw_type_error(env, NULL, PARAM_EMPTY_ERROR);
         return NULL;
     }
-    
+
     if (valuetype != napi_string && !isBuffer)
     {
         napi_throw_type_error(env, NULL, PARAM_TYPE_ERROR);
         return NULL;
     }
-    
+
     if (isBuffer)
     {
         size_t buffer_length;
@@ -48,8 +47,8 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
         napi_get_value_string_utf8(env, args[0], NULL, 0, &str_length);
         const char *tmp = (char *)malloc(sizeof(char) * str_length + 1);
         napi_get_value_string_utf8(env, args[0], tmp, str_length + 1, &str_size);
-        free(tmp);
         str = base92encode(tmp, str_length);
+        free(tmp);
     }
     napi_create_string_utf8(env, str, strlen(str), &result);
     free(str);
@@ -58,7 +57,6 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
 
 static napi_value DecodeBase92(napi_env env, napi_callback_info info)
 {
-    napi_status status;
     napi_value result;
     size_t argc = 1;
     napi_value args[1];
@@ -106,7 +104,6 @@ static napi_value DecodeBase92(napi_env env, napi_callback_info info)
 
 static napi_value Init(napi_env env, napi_value exports)
 {
-    napi_status status;
     napi_property_descriptor encode = DECLARE_NAPI_METHOD("encode", EncodeBase92);
     napi_property_descriptor decode = DECLARE_NAPI_METHOD("decode", DecodeBase92);
 
