@@ -65,7 +65,7 @@ unsigned char base92chr_decode(unsigned char byt)
     return DECODE_MAPPING[byt];
 }
 
-unsigned char *base92encode(unsigned char *str, int len)
+unsigned char *base92encode(unsigned char *str, size_t len)
 {
     unsigned int i, j;       // i for raw, j for encoded
     unsigned int size;       // for the malloc
@@ -77,7 +77,7 @@ unsigned char *base92encode(unsigned char *str, int len)
 
     if (len == 0)
     {
-        return "~";
+        return (unsigned char *)"~";
     }
     // precalculate how much space we need to malloc
     size = (len * 8) % 13;
@@ -164,16 +164,16 @@ unsigned char *base92encode(unsigned char *str, int len)
 
 // this guy expects a null-terminated string
 // gives back a non-null terminated string, and properly filled len
-unsigned char *base92decode(unsigned char *str, int *len)
+unsigned char *base92decode(unsigned char *str, size_t *len)
 {
     int i, j, b1, b2;
     int size;
     unsigned char *res;
     unsigned long workspace;
     unsigned short wssize;
-    size = strlen(str);
+    size = strlen((const char *)str);
     // handle small cases first
-    if (strcmp(str, "~") == 0 || size == 0)
+    if (strcmp((const char *)str, "~") == 0 || size == 0)
     {
         res = (unsigned char *)malloc(sizeof(char) * 1);
         res[0] = 0;

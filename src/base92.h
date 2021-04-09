@@ -8,7 +8,7 @@ unsigned char base92chr_encode(unsigned char byt);
 
 unsigned char base92chr_decode(unsigned char byt);
 
-unsigned char *base92encode(unsigned char *str, int len);
+unsigned char *base92encode(unsigned char *str, size_t len);
 
-unsigned char *base92decode(unsigned char *str, int *len);
+unsigned char *base92decode(unsigned char *str, size_t *len);
 #endif /* base92_h */

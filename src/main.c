@@ -17,10 +17,10 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
     napi_value args[1];
     bool isBuffer = false;
     napi_valuetype valuetype;
-    napi_get_cb_info(env, info, &argc, &args, NULL, NULL);
+    napi_get_cb_info(env, info, &argc, args, NULL, NULL);
     napi_is_buffer(env, args[0], &isBuffer);
     napi_typeof(env, args[0], &valuetype);
-    const char *str;
+    unsigned char *str;
     if (argc < 1)
     {
         napi_throw_type_error(env, NULL, PARAM_EMPTY_ERROR);
@@ -36,7 +36,7 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
     if (isBuffer)
     {
         size_t buffer_length;
-        const char *buffer_data;
+        unsigned char *buffer_data;
         napi_get_buffer_info(env, args[0], (void **)(&buffer_data), &buffer_length);
         str = base92encode(buffer_data, buffer_length);
     }
@@ -45,13 +45,12 @@ static napi_value EncodeBase92(napi_env env, napi_callback_info info)
         size_t str_length;
         size_t str_size;
         napi_get_value_string_utf8(env, args[0], NULL, 0, &str_length);
-        const char *tmp = (char *)malloc(sizeof(char) * str_length + 1);
-        napi_get_value_string_utf8(env, args[0], tmp, str_length + 1, &str_size);
+        unsigned char *tmp = (unsigned char *)malloc(sizeof(char) * str_length + 1);
+        napi_get_value_string_utf8(env, args[0], (char*)tmp, str_length + 1, &str_size);
         str = base92encode(tmp, str_length);
         free(tmp);
     }
-    napi_create_string_utf8(env, str, strlen(str), &result);
-    free(str);
+    napi_create_string_utf8(env, (const char*)str, strlen((const char *)str), &result);
     return result;
 }
 
@@ -62,10 +61,10 @@ static napi_value DecodeBase92(napi_env env, napi_callback_info info)
     napi_value args[1];
     bool isBuffer = false;
     napi_valuetype valuetype;
-    napi_get_cb_info(env, info, &argc, &args, NULL, NULL);
+    napi_get_cb_info(env, info, &argc, args, NULL, NULL);
     napi_is_buffer(env, args[0], &isBuffer);
     napi_typeof(env, args[0], &valuetype);
-    const char *str;
+    unsigned char *str;
     if (argc < 1)
     {
         napi_throw_type_error(env, NULL, PARAM_EMPTY_ERROR);
@@ -81,24 +80,21 @@ static napi_value DecodeBase92(napi_env env, napi_callback_info info)
     if (isBuffer)
     {
         size_t buffer_length;
-        const char *buffer_data;
+        unsigned char *buffer_data;
         napi_get_buffer_info(env, args[0], (void **)(&buffer_data), &buffer_length);
-        printf("buffer data = %s\n", buffer_data);
         str = base92decode(buffer_data, &buffer_length);
-        printf("%s\n", str);
     }
     else
     {
         size_t str_length;
         size_t str_size;
         napi_get_value_string_utf8(env, args[0], NULL, 0, &str_length);
-        const char *tmp = (char *)malloc(sizeof(char) * str_length + 1);
-        napi_get_value_string_utf8(env, args[0], tmp, str_length + 1, &str_size);
+        unsigned char *tmp = (unsigned char *)malloc(sizeof(char) * str_length + 1);
+        napi_get_value_string_utf8(env, args[0], (char*)tmp, str_length + 1, &str_size);
         str = base92decode(tmp, &str_length);
         free(tmp);
     }
-    napi_create_string_utf8(env, str, strlen(str), &result);
-    free(str);
+    napi_create_string_utf8(env, (const char*)str, strlen((const char*)str), &result);
     return result;
 }
 
