@@ -1,6 +1,6 @@
 {
   "name": "node-base92",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A C++ addon for nodejs supports base92 encoding and decoding",
   "main": "src/index.js",
   "files": [
